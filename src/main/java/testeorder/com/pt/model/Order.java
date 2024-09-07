@@ -10,14 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import testeorder.com.pt.model.Item;
-import testeorder.com.pt.model.User;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
+@Table(name = "orders")
 public class Order {
 	
 	@Id
