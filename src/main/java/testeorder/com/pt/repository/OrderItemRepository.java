@@ -8,5 +8,7 @@ import testeorder.com.pt.model.OrderItemId;
 
 @Repository
 public interface OrderItemRepository extends CrudRepository<OrderItem, OrderItemId>{
-
+	
+	OrderItem findByIdAndComplete(OrderItemId id, boolean complete);
+	
 }

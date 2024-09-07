@@ -64,14 +64,18 @@ public class StockMovementController {
 			List<Order> orders = orderRepository.findByStatus("incomplete");
 			if (!orders.isEmpty()) {
 				for (int i = 1; i < orders.size(); i++) {
-					OrderItemId orderItemId = new OrderItemId(orders.get(i).getId(), stockMovement.getItem().getId());
+					Order order = orders.get(i);
+					//checkOrderAndSendEmail(order);
+					OrderItemId orderItemId = new OrderItemId(order.getId(), stockMovement.getItem().getId());
 					Optional<OrderItem> orderItem = orderItemRepository.findById(orderItemId);
 					if (stockMovement.getQuantity() >= orderItem.get().getQuantity()) {
 						orderItem.get().setComplete(true);
+						orderItemRepository.save(orderItem.get());
 						stockMovement.setQuantity(stockMovement.getQuantity() - orderItem.get().getQuantity());
 					}
 				}
 			}
+			
 			stockMovementRepository.save(stockMovement);
 			return ResponseEntity.created(null).build();
 		} catch (Exception ex) {
