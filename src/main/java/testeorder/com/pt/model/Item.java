@@ -10,13 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 @Entity
 @Table(name = "item")
 public class Item {
@@ -31,5 +24,30 @@ public class Item {
 	@OneToOne
     @JoinColumn(name = "stock_movement_id")
 	private StockMovement stockMovement;
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Order getOrder() {
+		return order;
+	}
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+	public StockMovement getStockMovement() {
+		return stockMovement;
+	}
+	public void setStockMovement(StockMovement stockMovement) {
+		this.stockMovement = stockMovement;
+	}
 	
 }

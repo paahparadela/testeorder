@@ -68,4 +68,22 @@ public class UserController {
 		}
 	}
 	
+	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@ResponseBody
+	public ResponseEntity<?> update(@RequestBody User user) {
+		try {
+			Optional<User> oldUser = userRepository.findById(user.getId());
+			if(oldUser.isPresent()){
+				userRepository.save(user);
+				return ResponseEntity.status(200).body(user);
+	        }
+			return new ResponseEntity<>(
+					"{ \"errorMessage\": \"Error: user not found!\" }", 
+					HttpStatus.NOT_FOUND
+				);
+		} catch (Exception ex) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
 }
