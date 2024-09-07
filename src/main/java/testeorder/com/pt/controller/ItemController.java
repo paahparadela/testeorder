@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import testeorder.com.pt.model.Item;
-import testeorder.com.pt.model.User;
 import testeorder.com.pt.repository.ItemRepository;
 
 @RestController

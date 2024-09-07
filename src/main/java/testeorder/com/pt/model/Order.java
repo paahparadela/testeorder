@@ -26,6 +26,7 @@ public class Order {
 	@ManyToOne
     @JoinColumn(name = "user_id")
 	private User user;
+	private String status;
 	
 	public Long getId() {
 		return id;
@@ -56,6 +57,12 @@ public class Order {
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

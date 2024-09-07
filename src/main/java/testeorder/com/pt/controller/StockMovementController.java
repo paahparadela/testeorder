@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import testeorder.com.pt.model.StockMovement;
-import testeorder.com.pt.model.User;
 import testeorder.com.pt.repository.StockMovementRepository;
-import testeorder.com.pt.repository.UserRepository;
 
 @RestController
 @RequestMapping("stockmovement")

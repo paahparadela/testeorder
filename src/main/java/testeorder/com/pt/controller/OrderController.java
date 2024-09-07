@@ -1,6 +1,7 @@
 package testeorder.com.pt.controller;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import testeorder.com.pt.model.Item;
 import testeorder.com.pt.model.Order;
-import testeorder.com.pt.model.User;
+import testeorder.com.pt.model.StockMovement;
+import testeorder.com.pt.repository.ItemRepository;
 import testeorder.com.pt.repository.OrderRepository;
+import testeorder.com.pt.repository.StockMovementRepository;
 
 @RestController
 @RequestMapping("order")
@@ -23,6 +27,12 @@ public class OrderController {
 	
 	@Autowired
 	OrderRepository orderRepository;
+	
+	@Autowired
+	StockMovementRepository stockMovementRepository;
+	
+	@Autowired
+	ItemRepository itemRepository;
 	
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<?> getAll() {
@@ -52,6 +62,18 @@ public class OrderController {
 	@ResponseBody
 	public ResponseEntity<?> create(@RequestBody Order order) {
 		try {
+			Set<Item> items = order.getItems();
+			order.setStatus("complete");
+			for (int i = 0; i < items.size(); i++) {
+				Optional<Item> itemOptional = itemRepository.findById(items.iterator().next().getId());
+				Optional<StockMovement> stockMovementOptional = stockMovementRepository.findById(itemOptional.get().getStockMovement().getId());
+				if (stockMovementOptional.get().getQuantity() == 0 || order.getQuantity() > stockMovementOptional.get().getQuantity()) {
+					order.setStatus("incomplete");
+				} else {
+					stockMovementOptional.get().setQuantity(stockMovementOptional.get().getQuantity()-order.getQuantity());
+					stockMovementRepository.save(stockMovementOptional.get());
+				}
+			}
 			orderRepository.save(order);
 			return ResponseEntity.created(null).build();
 		} catch (Exception ex) {
