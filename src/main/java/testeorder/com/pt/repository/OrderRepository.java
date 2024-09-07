@@ -7,5 +7,7 @@ import testeorder.com.pt.model.Order;
 
 @Repository
 public interface OrderRepository extends CrudRepository<Order, Long>{
+	
+	Order findTopByOrderByIdDesc();
 
 }

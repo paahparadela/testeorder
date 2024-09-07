@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import testeorder.com.pt.model.Item;
 import testeorder.com.pt.model.Order;
+import testeorder.com.pt.model.OrderItem;
 import testeorder.com.pt.model.StockMovement;
 import testeorder.com.pt.repository.ItemRepository;
+import testeorder.com.pt.repository.OrderItemRepository;
 import testeorder.com.pt.repository.OrderRepository;
 import testeorder.com.pt.repository.StockMovementRepository;
 
@@ -33,6 +35,9 @@ public class OrderController {
 	
 	@Autowired
 	ItemRepository itemRepository;
+	
+	@Autowired
+	OrderItemRepository orderItemRepository;
 	
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<?> getAll() {
@@ -63,12 +68,25 @@ public class OrderController {
 	public ResponseEntity<?> create(@RequestBody Order order) {
 		try {
 			Set<Item> items = order.getItems();
+			Optional<Order> oldOrder = Optional.ofNullable(orderRepository.findTopByOrderByIdDesc());
+			if (oldOrder.isPresent()) {
+			    order.setId(oldOrder.get().getId() + 1);
+			} else {
+			    order.setId((long) 1);
+			}
 			order.setStatus("complete");
 			for (int i = 0; i < items.size(); i++) {
 				Optional<Item> itemOptional = itemRepository.findById(items.iterator().next().getId());
 				Optional<StockMovement> stockMovementOptional = stockMovementRepository.findById(itemOptional.get().getStockMovement().getId());
 				if (stockMovementOptional.get().getQuantity() == 0 || order.getQuantity() > stockMovementOptional.get().getQuantity()) {
 					order.setStatus("incomplete");
+					OrderItem orderItem = new OrderItem();
+					orderItem.setOrder(order);
+					orderItem.setItem(itemOptional.get());
+					orderItem.setQuantity(order.getQuantity());
+					orderItem.setComplete(false);
+					order.getOrderItems().add(orderItem);
+					orderItemRepository.save(orderItem);
 				} else {
 					stockMovementOptional.get().setQuantity(stockMovementOptional.get().getQuantity()-order.getQuantity());
 					stockMovementRepository.save(stockMovementOptional.get());
